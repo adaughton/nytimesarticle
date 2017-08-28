@@ -1,6 +1,9 @@
 import requests
 
-API_ROOT = 'https://developer.nytimes.com/article_search_v2.json'
+# example
+# http://api.nytimes.com/svc/search/v2/articlesearch.json?q=new+york+times&page=2&sort=oldest&api-key=####
+
+API_ROOT = 'http://api.nytimes.com/svc/search/v2/articlesearch.json?'
 
 API_SIGNUP_PAGE = 'http://developer.nytimes.com/docs/reference/keys'
 
@@ -107,9 +110,9 @@ class articleAPI(object):
         if key is None:
             key = self.key
 
-        url = '%s%s?%sapi-key=%s' % (
-            API_ROOT, response_format, self._options(**kwargs), key
+        url = '%s?%sapi-key=%s' % (
+            API_ROOT, self._options(**kwargs), key
         )
-
+        print(url)
         r = requests.get(url)
         return r.json()
