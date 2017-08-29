@@ -1,9 +1,10 @@
 import requests
 
+
 # example
 # http://api.nytimes.com/svc/search/v2/articlesearch.json?q=new+york+times&page=2&sort=oldest&api-key=####
 
-API_ROOT = 'http://api.nytimes.com/svc/search/v2/articlesearch.json?'
+API_ROOT = 'http://api.nytimes.com/svc/search/v2/articlesearch.json'
 
 API_SIGNUP_PAGE = 'http://developer.nytimes.com/docs/reference/keys'
 
@@ -32,14 +33,16 @@ class articleAPI(object):
     def _utf8_encode(self, d):
         """
         Ensures all values are encoded in UTF-8 and converts them to lowercase
-
+        FIXME: this is legacy. We don't actually want things encoded as utf-8
+               because then we get exra 'b's in front of strings that screw up
+               the api
         """
         for k, v in d.items():
             if isinstance(v, str):
-                d[k] = v.encode('utf8').lower()
+                d[k] = v.lower()
             if isinstance(v, list):
                 for index,item in enumerate(v):
-                    item = item.encode('utf8').lower()
+                    item = item.lower()
                     v[index] = item
             if isinstance(v, dict):
                 d[k] = self._utf8_encode(v)
@@ -86,6 +89,7 @@ class articleAPI(object):
             if k is 'fq' and isinstance(v, dict):
                 v = _format_fq(v)
             elif isinstance(v, list):
+                print(v)
                 v = ','.join(v)
             values += '%s=%s&' % (k, v)
 
@@ -113,6 +117,6 @@ class articleAPI(object):
         url = '%s?%sapi-key=%s' % (
             API_ROOT, self._options(**kwargs), key
         )
-        print(url)
+        print('api url: ', url) # for debugging purposes
         r = requests.get(url)
         return r.json()
